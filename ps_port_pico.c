@@ -23,6 +23,7 @@
 #include "hardware/flash.h"
 #include "hardware/structs/trng.h"
 #include "hardware/watchdog.h"
+#include "pico/time.h"
 #include "pico/bootrom.h"
 #include "pico/cyw43_arch.h"
 #include "pico/flash.h"
@@ -448,10 +449,46 @@ int ps_port_ota_end(void)
 
 void ps_port_ota_abort(void) { s_ota.open = false; }
 
+/* A new image boots under the bootrom's watchdog and has 16.7 s to buy itself
+ * (RP2350 datasheet, 5.1.17), less than joining WiFi and reaching the server
+ * can take. So the trial is ours: from before main(), a timer interrupt feeds
+ * the watchdog until the image is bought or the trial is over, and then stops,
+ * and the bootrom goes back to the previous image. An interrupt keeps feeding
+ * while threads hang, but never past the trial. */
+#ifndef CONFIG_PINSCOPE_OTA_TRIAL_S
+#define CONFIG_PINSCOPE_OTA_TRIAL_S 300
+#endif
+static repeating_timer_t s_trial_timer;
+static volatile bool s_bought;
+static absolute_time_t s_trial_end;
+
+static bool trial_feed(repeating_timer_t *t)
+{
+    (void)t;
+    if (s_bought || absolute_time_diff_us(get_absolute_time(), s_trial_end) <= 0) {
+        return false;
+    }
+    watchdog_update();
+    return true;
+}
+
+__attribute__((constructor)) static void trial_watch(void)
+{
+    if (!ps_port_ota_on_trial()) {
+        return;
+    }
+    s_trial_end = make_timeout_time_ms(CONFIG_PINSCOPE_OTA_TRIAL_S * 1000u);
+    watchdog_enable(8000, true);
+    add_repeating_timer_ms(1000, trial_feed, NULL, &s_trial_timer);
+}
+
 void ps_port_ota_confirm(void)
 {
-    if (rom_get_last_boot_type() == BOOT_TYPE_FLASH_UPDATE) {
-        rom_explicit_buy(s_workarea, sizeof(s_workarea));
+    if (rom_get_last_boot_type() == BOOT_TYPE_FLASH_UPDATE &&
+        rom_explicit_buy(s_workarea, sizeof(s_workarea)) == BOOTROM_OK) {
+        s_bought = true;
+        cancel_repeating_timer(&s_trial_timer);
+        watchdog_disable();
     }
 }
 
