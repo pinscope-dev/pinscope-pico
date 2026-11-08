@@ -1,0 +1,111 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "pinscope-pico-0.1.2",
+  "documentNamespace": "https://pinscope.dev/spdx/pinscope-pico-0.1.2-f0f9fa4c-ff21-5f55-9cbc-4f7535be0873",
+  "creationInfo": {
+    "created": "2026-11-08T18:34:04Z",
+    "creators": [
+      "Organization: Pinscope (security@pinscope.dev)",
+      "Tool: component-sbom.py"
+    ]
+  },
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-Pinscope",
+      "name": "pinscope-pico",
+      "versionInfo": "0.1.2",
+      "supplier": "Organization: Pinscope (security@pinscope.dev)",
+      "downloadLocation": "git+https://github.com/pinscope-dev/pinscope-pico.git@v0.1.2",
+      "homepage": "https://pinscope.dev",
+      "licenseConcluded": "LicenseRef-Pinscope-Device-1.0",
+      "licenseDeclared": "LicenseRef-Pinscope-Device-1.0",
+      "copyrightText": "Copyright (c) 2026 Pinscope",
+      "filesAnalyzed": false,
+      "primaryPackagePurpose": "LIBRARY",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:github/pinscope-dev/pinscope-pico@v0.1.2"
+        }
+      ]
+    },
+    {
+      "SPDXID": "SPDXRef-ref10",
+      "name": "ref10 field arithmetic (X25519)",
+      "versionInfo": "NOASSERTION",
+      "originator": "Person: Daniel J. Bernstein, Niels Duif, Tanja Lange, Peter Schwabe, Bo-Yin Yang",
+      "supplier": "Organization: Pinscope (security@pinscope.dev)",
+      "downloadLocation": "https://bench.cr.yp.to/supercop.html",
+      "licenseConcluded": "LicenseRef-public-domain",
+      "licenseDeclared": "LicenseRef-public-domain",
+      "copyrightText": "NONE",
+      "filesAnalyzed": false,
+      "comment": "Adapted into src/ps_crypto.c; the X25519 ladder follows RFC 7748."
+    },
+    {
+      "SPDXID": "SPDXRef-poly1305-donna",
+      "name": "poly1305-donna",
+      "versionInfo": "NOASSERTION",
+      "originator": "Person: Andrew Moon",
+      "supplier": "Organization: Pinscope (security@pinscope.dev)",
+      "downloadLocation": "https://github.com/floodyberry/poly1305-donna",
+      "licenseConcluded": "LicenseRef-public-domain",
+      "licenseDeclared": "LicenseRef-public-domain",
+      "copyrightText": "NONE",
+      "filesAnalyzed": false,
+      "comment": "Adapted into src/ps_crypto.c. ChaCha20 and the AEAD follow RFC 8439, SHA-256 FIPS 180-4, written for Pinscope."
+    },
+    {
+      "SPDXID": "SPDXRef-platform",
+      "name": "Raspberry Pi Pico SDK",
+      "versionInfo": "from the product build",
+      "supplier": "NOASSERTION",
+      "downloadLocation": "https://github.com/raspberrypi/pico-sdk",
+      "licenseConcluded": "NOASSERTION",
+      "licenseDeclared": "BSD-3-Clause",
+      "copyrightText": "NOASSERTION",
+      "filesAnalyzed": false,
+      "comment": "Not part of this component: it is built against the platform of the product, which the product SBOM lists with its version."
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Pinscope"
+    },
+    {
+      "spdxElementId": "SPDXRef-Pinscope",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-ref10"
+    },
+    {
+      "spdxElementId": "SPDXRef-Pinscope",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-poly1305-donna"
+    },
+    {
+      "spdxElementId": "SPDXRef-Pinscope",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-platform"
+    }
+  ],
+  "hasExtractedLicensingInfos": [
+    {
+      "licenseId": "LicenseRef-Pinscope-Device-1.0",
+      "name": "Pinscope Device Licence 1.0",
+      "extractedText": "Source-available: use in any product, with the Pinscope service. The full text is in LICENSE in the package.",
+      "seeAlsos": [
+        "https://github.com/pinscope-dev/pinscope-pico/blob/main/LICENSE"
+      ]
+    },
+    {
+      "licenseId": "LicenseRef-public-domain",
+      "name": "Public domain",
+      "extractedText": "Placed in the public domain by its authors."
+    }
+  ]
+}
