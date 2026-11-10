@@ -1,0 +1,41 @@
+# The GitHub release of a version tag: on a tag push, with the tag's message as
+# the notes; or by hand (Run workflow) with the notes given, which also
+# replaces the notes of a release that exists.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Version tag, for example v0.2.5
+        required: true
+      notes:
+        description: Release notes (Markdown)
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+          NOTES: ${{ inputs.notes }}
+        run: |
+          repo=$GITHUB_REPOSITORY
+          if [ -z "$NOTES" ]; then
+            ref=$(gh api "repos/$repo/git/ref/tags/$TAG" -q '.object.type + " " + .object.sha')
+            if [ "${ref%% *}" = tag ]; then NOTES=$(gh api "repos/$repo/git/tags/${ref#* }" -q .message); fi
+          fi
+          [ -n "$NOTES" ] || NOTES="Pinscope $TAG. See the README."
+          if gh release view "$TAG" -R "$repo" >/dev/null 2>&1; then
+            gh release edit "$TAG" -R "$repo" --notes "$NOTES"
+          else
+            gh release create "$TAG" -R "$repo" --verify-tag --title "$TAG" --notes "$NOTES"
+          fi
