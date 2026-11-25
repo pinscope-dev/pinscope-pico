@@ -4,6 +4,8 @@ Remote access, logs, metrics, HardFault reports and A/B firmware updates for the
 Pico 2 W with the Pico SDK, over one outbound connection to
 [Pinscope](https://pinscope.dev). About 9 KB of RAM, no TLS library.
 
+Featured on [CNX Software](https://www.cnx-software.com/2026/11/25/pinscope-a-web-based-remote-access-and-vulnerability-tracking-solution-for-esp32-zephyr-pico-2-w-and-linux-sbcs/).
+
 ## Try it in five minutes
 
 You need CMake, Ninja and the Arm GCC (`arm-none-eabi-gcc`; on macOS
